@@ -66,4 +66,7 @@ try:
     else:
         st.info("💡 账本目前是空的，在左边记一笔试试吧！")
 except Exception as e:
-    st.error(f"读取数据失败，请确保你在 Supabase 网页里点击 RUN 运行了建表命令！")
+  except Exception as e:
+    st.error(f"❌ 报错啦！具体失败原因如下，请看这里：")
+    st.code(str(e)) # 这行代码会把真正的错误原因用黑框打印在网页上
+    st.info("💡 提示：如果上面显示 'invalid_api_key'，说明是 SUPABASE_KEY 贴错了；如果显示 'endpoint not found'，说明是 SUPABASE_URL 贴错了。")
