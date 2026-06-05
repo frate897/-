@@ -5,7 +5,7 @@ from supabase import create_client
 
 # ==================== 1. 填写你的云账本钥匙 ====================
 SUPABASE_URL = "https://ubmaolxyxrdcpxlbqhje.supabase.co"
-SUPABASE_KEY = "ubmaolxyxrdcpxlbqhje"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVibWFvbHh5eHJkY3B4bGJxaGplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2ODY0MDIsImV4cCI6MjA5NjI2MjQwMn0.5I0hYyf3LU5-uf2YHqJr9Ak67gj_TFQxauFT4efylFE"
 # =============================================================
 
 # 自动连接网上的账本
