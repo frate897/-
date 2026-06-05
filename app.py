@@ -47,7 +47,9 @@ if submit_btn:
 
 # 右侧主面板：读取并显示数据
 try:
-    res = supabase.table("ledger").select("*").order("date", descending=True).execute()
+    # 💡 修正的地方：把 descending=True 改成了 desc=True
+    res = supabase.table("ledger").select("*").order("date", desc=True).execute()
+    
     if res.data:
         df = pd.DataFrame(res.data).rename(columns={"date": "日期", "type": "类型", "amount": "金额", "reason": "原因"})
         
