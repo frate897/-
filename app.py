@@ -47,15 +47,15 @@ if submit_btn:
 
 # 右侧主面板：读取并显示数据
 try:
-    # 💡 修正的地方：把 descending=True 改成了 desc=True
+    # 读取所有数据（包含数据库里每条账目独有的 id，用来精准删除）
     res = supabase.table("ledger").select("*").order("date", desc=True).execute()
     
     if res.data:
-        df = pd.DataFrame(res.data).rename(columns={"date": "日期", "type": "类型", "amount": "金额", "reason": "原因"})
+        df_raw = pd.DataFrame(res.data)
         
         # 计算总收入与总支出
-        in_sum = df[df["类型"] == "收入"]["金额"].sum()
-        ex_sum = df[df["类型"] == "支出"]["金额"].sum()
+        in_sum = df_raw[df_raw["type"] == "收入"]["amount"].sum()
+        ex_sum = df_raw[df_raw["type"] == "支出"]["amount"].sum()
         
         # 顶部三个大方块看板
         c1, c2, c3 = st.columns(3)
@@ -63,11 +63,35 @@ try:
         c2.metric("💸 总支出", f"￥{ex_sum:,.2f}")
         c3.metric("📈 净利润", f"￥{in_sum - ex_sum:,.2f}")
         
-        # 显示历史明细表格
         st.write("---")
-        st.dataframe(df[["日期", "类型", "金额", "原因"]], use_container_width=True)
+        st.subheader("📋 历史明细与操作")
+        
+        # 💡 核心新增：用循环的方式把账目一条条显示出来，并在每条账目后面配一个删除按钮
+        for index, row in df_raw.iterrows():
+            # 创建4个并排的列，前3列显示账目内容，第4列放删除按钮
+            col_info, col_amt, col_reason, col_btn = st.columns([2, 2, 4, 1])
+            
+            with col_info:
+                # 区分收入和支出的显示颜色
+                emoji = "🟢 收入" if row['type'] == "收入" else "🔴 支出"
+                st.write(f"**{row['date']}** {emoji}")
+            with col_amt:
+                st.write(f"**￥{row['amount']:.2f}**")
+            with col_reason:
+                st.write(f"{row['reason']}")
+            with col_btn:
+                # 每条账目自带一个专属的删除按钮，绑定它在数据库里的 id
+                if st.button("🗑️ 删除", key=f"del_{row['id']}"):
+                    try:
+                        # 去云端数据库里，把这个 id 的那一行删掉
+                        supabase.table("ledger").delete().eq("id", row['id']).execute()
+                        st.toast("👋 账目已成功删除！")
+                        st.rerun() # 刷新网页
+                    except Exception as del_err:
+                        st.error(f"删除失败: {del_err}")
+                        
     else:
         st.info("💡 账本目前是空的，在左边记一笔试试吧！")
 except Exception as read_error:
-    st.error("❌ 读取数据失败！具体错误原因如下：")
+    st.error("❌ 读取数据失败！")
     st.code(str(read_error))
