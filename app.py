@@ -6,7 +6,7 @@ from supabase import create_client
 # ==================== 把你的钥匙贴在下面 ====================
 # 把引文里的内容，换成你刚刚在微信里备用的那两串长字符！
 SUPABASE_URL = "https://ubmaolxyxrdcpxlbqhje.supabase.co"
-SUPABASE_KEY = "sb_publishable_gD95bz_uw6uqCwri8zmf2g_m_dwTs3F"
+SUPABASE_KEY = "ubmaolxyxrdcpxlbqhje"
 # ==========================================================
 
 # 1. 自动连接网上的账本
